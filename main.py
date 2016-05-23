@@ -6,7 +6,15 @@ import email
 import time
 import sys
 import os
-import winsound
+import platform
+
+if platform.system() == "Windows":
+	isWindows = True
+else:
+	isWindows = False
+
+if isWindows:
+	import winsound
 
 def trainTicket(from_station,to_station,date=[],seat=[],no_GD=False,email=False,nightQuery=False,not_like=[],like=[],fromTimeLimit=[],toTimeLimit=[]):
 	ltime=time.localtime()
@@ -46,10 +54,13 @@ def trainTicket(from_station,to_station,date=[],seat=[],no_GD=False,email=False,
 		'Connection':'keep-alive',
 		'Accept-Language':'zh-CN,zh;q=0.8'
 	}
-
+	
 	for date_var in date:
 		print u"\n\n正在查询 "+date_var+u" 的车票...\n"
+		# old url
 		url = 'https://kyfw.12306.cn/otn/leftTicket/queryT?leftTicketDTO.train_date='+date_var+'&leftTicketDTO.from_station='+stationCode[from_station]+'&leftTicketDTO.to_station='+stationCode[to_station]+'&purpose_codes=ADULT'
+		# 2016-05-23 update the url
+		url = 'https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date='+date_var+'&leftTicketDTO.from_station='+stationCode[from_station]+'&leftTicketDTO.to_station='+stationCode[to_station]+'&purpose_codes=ADULT'
 
 		req = urllib2.Request(url,headers=send_headers)
 		r  = urllib2.urlopen(req)
@@ -96,8 +107,9 @@ def trainTicket(from_station,to_station,date=[],seat=[],no_GD=False,email=False,
 				print info
 				if email:
 					sendmail(date_var+u" 从 "+from_station+u" 到 "+to_station+" "+info)
-				while True:
-					winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+				if isWindows:
+					while True:
+						winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
 		print u'查询无车票，等待下一次查询'
 
 def sendmail(content):
@@ -113,7 +125,9 @@ def sendmail(content):
 	myemail.sendmail('iinux@139.com',['iinux@139.com'],msg.as_string())
 	myemail.quit()
 
-winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+if isWindows:
+	winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+
 while(True):
 	try:
 		trainTicket(u'石家庄',u'北京',['2016-02-13'],[u'二等座',u'硬座',u'硬卧'],email=False,fromTimeLimit=['12:00','23:59'],toTimeLimit=['00:00','22:00'])
