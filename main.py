@@ -181,7 +181,7 @@ def to_daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
         if pid > 0:
             sys.exit(0)   # 父进程退出
     except OSError, e:
-        sys.stderr.write('fork #1 failed: (%d) %s\n' % (e.errno, e.strerror))
+        error_output('fork #1 failed: (%d) %s\n' % (e.errno, e.strerror))
         sys.exit(1)
 
     # 从母体环境脱离
@@ -196,12 +196,13 @@ def to_daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
         if pid > 0:
             sys.exit(0)   # 第二个父进程退出
     except OSError, e:
-        sys.stderr.write('fork #2 failed: (%d) %s\n' % (e.errno, e.strerror))
+        error_output('fork #2 failed: (%d) %s\n' % (e.errno, e.strerror))
         sys.exit(1)
 
     # 进程已经是守护进程了，重定向标准文件描述符
 
-    for f in sys.stdout, sys.stderr: f.flush()
+    for f in sys.stdout, sys.stderr:
+        f.flush()
     si = open(stdin, 'r')
     so = open(stdout, 'a+')
     se = open(stderr, 'a+', 0)
