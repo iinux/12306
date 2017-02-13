@@ -30,6 +30,7 @@ now_time = time.strftime('%Y-%m-%d %X', local_time)
 daemon_mode = False
 internal_second = 60
 debug = False
+error_notification_trigger_number = 10
 ##############################
 
 
@@ -41,8 +42,18 @@ def dd(var):
 def output(var):
     print now_time + ' ' + var
 
+error_buffer = ''
+error_count = 0
+
 
 def error_output(var):
+    global error_buffer, error_count
+    error_buffer += '|' + var
+    error_count += 1
+    if error_count == error_notification_trigger_number:
+        send_mail('error buffer:' + error_buffer)
+        error_buffer = ''
+        error_count = 0
     print now_time + ' ' + var
 
 
