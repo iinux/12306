@@ -7,6 +7,7 @@ import time
 import sys
 import os
 import platform
+import datetime
 
 
 reload(sys)
@@ -47,6 +48,8 @@ def error_output(var):
 
 def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify=False, night_query=False,
                  not_like=[], like=[], start_time_limit=[], to_time_limit=[]):
+    current_datetime = datetime.datetime.now()
+    current_date = current_datetime.strftime('%Y-%m-%d')
     if not night_query and (local_time[3] >= 23 or local_time[3] < 5):
         output(u'23：00到次日6：00无法订票，所以23：00到5：00不作查询。若此期间有退票，会在5：00后提醒。')
         return
@@ -86,6 +89,10 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
     }
 
     for date_var in date:
+        if current_date > date_var:
+            output(u'旧日期，跳过')
+            continue
+
         output(u'正在查询 ' + date_var + ' 的车票...')
         # old url
         url = 'https://kyfw.12306.cn/otn/leftTicket/queryT?leftTicketDTO.train_date=' + date_var + \
@@ -97,6 +104,14 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
               station_code[to_station] + '&purpose_codes=ADULT'
         # 2016-12-24 update the url
         url = 'https://kyfw.12306.cn/otn/leftTicket/queryA?leftTicketDTO.train_date=' + date_var + \
+              '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
+              station_code[to_station] + '&purpose_codes=ADULT'
+        # 2017-2-2 update the url
+        url = 'https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=' + date_var + \
+              '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
+              station_code[to_station] + '&purpose_codes=ADULT'
+        # 2017-2-13 update the url
+        url = 'https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=' + date_var + \
               '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
               station_code[to_station] + '&purpose_codes=ADULT'
 
@@ -136,16 +151,14 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
             for seat_var in seat:
                 if train_data[seat_code[seat_var]] == '--':
                     continue
-                info = train_data['station_train_code'] + '从' + train_data['start_time'] + '到' + \
-                       train_data['arrive_time'] + '历时' + train_data['lishi'] + '有 ' + \
-                       train_data[seat_code[seat_var]] + ' 个' + seat_var
+                info = train_data['station_train_code'] + '有 ' + train_data[seat_code[seat_var]] + ' 个' + seat_var + '从' + train_data['start_time'] + '到' + train_data['arrive_time'] + '历时' + train_data['lishi']
                 output(info)
                 if train_data[seat_code[seat_var]] == '无':
                     continue
                 if email_notify:
                     send_mail(info + ' ' + date_var + '从' + from_station + '到' + to_station)
-                while True:
-                    sound_system_exclamation()
+                #while True:
+                sound_system_exclamation()
     output(u'本次查询结束，等待下一次查询，' + str(internal_second) + '秒之后')
 
 
@@ -224,9 +237,8 @@ send_mail('开始查询')
 
 while True:
     try:
-        train_ticket('北京', '厦门', ['2017-01-20', '2017-01-21', '2017-01-22'], ['硬卧'], email_notify=True,
+        train_ticket('北京', '厦门', ['2017-01-20', '2017-02-21', '2017-02-22'], ['硬卧'], email_notify=True,
                      start_time_limit=['16:00', '16:05'], to_time_limit=['00:00', '23:59'])
-        time.sleep(internal_second)
     except KeyboardInterrupt:
         error_output('KeyboardInterrupt - EXIT')
         exit()
@@ -239,3 +251,4 @@ while True:
     except Exception, e:
         error_output(str(Exception) + ' ' + str(e))
         pass
+    time.sleep(internal_second)
