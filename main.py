@@ -2,12 +2,12 @@
 import json
 import urllib2
 import smtplib
-import email
 import time
 import sys
 import os
 import platform
 import datetime
+from email.mime.text import MIMEText
 
 
 reload(sys)
@@ -51,7 +51,7 @@ def error_output(var):
     error_buffer += '|' + var
     error_count += 1
     if error_count == error_notification_trigger_number:
-        send_mail('error buffer:' + error_buffer)
+        send_mail('error buffer', error_buffer)
         error_buffer = ''
         error_count = 0
     print now_time + ' ' + var
@@ -173,13 +173,13 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
     output(u'本次查询结束，等待下一次查询，' + str(internal_second) + '秒之后')
 
 
-def send_mail(content):
+def send_mail(content, body='body'):
     if debug:
         return
     my_email = smtplib.SMTP('smtp.139.com', 25)
     my_email.login('iinux@139.com', 'leuwai')
 
-    msg = email.Message.Message()
+    msg = MIMEText(body, 'plain', 'utf-8')
     # msg = email.mime.text.MIMEText(content,_subtype='plain')
     msg['to'] = 'iinux@139.com'
     msg['from'] = 'iinux@139.com'
