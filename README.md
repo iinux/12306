@@ -2,7 +2,7 @@
 ======================
 #### 安装和使用
   1. 安装 Python 2.7 或更高版本
-  1. git `clone https://github.com/iinux/12306`
+  1. `git clone https://github.com/iinux/12306`
   1. 修改 config 和 ticket info 设置接收邮箱，出发地，目的地，日期，席别，出发时间限制，到达时间限制，
   1. `python main.py` 运行程序
 
