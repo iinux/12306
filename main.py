@@ -31,6 +31,23 @@ daemon_mode = False
 internal_second = 60
 debug = False
 error_notification_trigger_number = 10
+
+smtp_server = 'smtp.139.com'
+smtp_port = 25
+from_email = 'iinux@139.com'
+from_email_password = 'leuwai'
+to_email = 'iinux@139.com'
+
+random_letter = 'X'
+
+##############################
+# ticket info
+##############################
+
+
+def want_ticket():
+    train_ticket('北京', '厦门', ['2017-01-20', '2017-02-21', '2017-02-22'], ['硬卧'], email_notify=True,
+                 start_time_limit=['16:00', '16:05'], to_time_limit=['00:00', '23:59'])
 ##############################
 
 
@@ -57,6 +74,28 @@ def error_output(var):
     print now_time + ' ' + var
 
 
+def fatal_error(msg):
+    error_output(msg)
+    send_mail(msg)
+    sys.exit(-1)
+
+
+def find_station_code(station_name):
+    station_name += '|'
+    fd = open('station_name.js', 'r')
+    str = fd.readline()
+    index = str.find(station_name)
+    if index == -1:
+        msg = u'车站名有误，请检查'
+        fatal_error(msg)
+    p = code_start = index + station_name.__len__()
+    station_code = ''
+    while str[p] != '|':
+        station_code += str[p]
+        p += 1
+    return station_code
+
+
 def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify=False, night_query=False,
                  not_like=[], like=[], start_time_limit=[], to_time_limit=[]):
     current_datetime = datetime.datetime.now()
@@ -74,6 +113,12 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
         '石家庄': 'SJP',
         '厦门': 'XMS',
     }
+
+    if not station_code.has_key(from_station):
+        station_code[from_station] = find_station_code(from_station)
+    if not station_code.has_key(to_station):
+        station_code[to_station] = find_station_code(to_station)
+
     seat_code = {
         # '硬座': 'gg_num',
         '高级软卧': 'gr_num',
@@ -122,7 +167,7 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
               '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
               station_code[to_station] + '&purpose_codes=ADULT'
         # 2017-2-13 update the url
-        url = 'https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=' + date_var + \
+        url = 'https://kyfw.12306.cn/otn/leftTicket/query' + random_letter + '?leftTicketDTO.train_date=' + date_var + \
               '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
               station_code[to_station] + '&purpose_codes=ADULT'
 
@@ -176,16 +221,16 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
 def send_mail(content, body='body'):
     if debug:
         return
-    my_email = smtplib.SMTP('smtp.139.com', 25)
-    my_email.login('iinux@139.com', 'leuwai')
+    my_email = smtplib.SMTP(smtp_server, smtp_port)
+    my_email.login(from_email, from_email_password)
 
     msg = MIMEText(body, 'plain', 'utf-8')
     # msg = email.mime.text.MIMEText(content,_subtype='plain')
-    msg['to'] = 'iinux@139.com'
-    msg['from'] = 'iinux@139.com'
-    msg['subject'] = content  # '有票通知'
+    msg['to'] = to_email
+    msg['from'] = from_email
+    msg['subject'] = content
 
-    my_email.sendmail('iinux@139.com', ['iinux@139.com'], msg.as_string())
+    my_email.sendmail(from_email, [to_email], msg.as_string())
     my_email.quit()
 
 
@@ -248,8 +293,7 @@ send_mail('开始查询')
 
 while True:
     try:
-        train_ticket('北京', '厦门', ['2017-01-20', '2017-02-21', '2017-02-22'], ['硬卧'], email_notify=True,
-                     start_time_limit=['16:00', '16:05'], to_time_limit=['00:00', '23:59'])
+        want_ticket()
     except KeyboardInterrupt:
         error_output('KeyboardInterrupt - EXIT')
         exit()
