@@ -96,3 +96,21 @@ class TrainInfo:
 
     def get_take_time(self):
         return self.data[10]
+
+    def get_origin_area(self):
+        return self.data[4]
+
+    def get_terminal_area(self):
+        return self.data[5]
+
+    def get_from_station(self):
+        return self.data[6]
+
+    def get_to_station(self):
+        return self.data[7]
+
+    def get_departure_date(self):
+        return self.data[13]
+
+    def is_stop_run(self):
+        return self.data[19]
