@@ -21,7 +21,7 @@ sys.setdefaultencoding('utf-8')
 
 
 def want_ticket():
-    train_ticket('北京', '厦门', ['2017-07-20', '2017-07-21', '2017-02-22'], ['硬卧'], email_notify=True,
+    train_ticket('北京', '厦门', ['2017-07-20', '2017-07-21', '2017-07-22'], ['硬卧'], email_notify=True,
                  start_time_limit=['16:00', '16:05'], to_time_limit=['00:00', '23:59'])
 ##############################
 
@@ -35,23 +35,6 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
         my_helper.output(u'23：00到次日6：00无法订票，所以23：00到5：00不作查询。若此期间有退票，会在5：00后提醒。')
         return
 
-
-    seat_code = {
-        # '硬座': 'gg_num',
-        '高级软卧': 'gr_num',
-        '其它': 'qt_num',
-        '软卧': 'rw_num',
-        '软座': 'rz_num',
-        '商务座': 'swz_num',
-        '特等座': 'tz_num',
-        '无座': 'wz_num',
-        # '硬座': 'yb_num',
-        '硬卧': 'yw_num',
-        '硬座': 'yz_num',
-        '二等座': 'ze_num',
-        '一等座': 'zy_num',
-    }
-
     for date_var in date:
         if current_date > date_var:
             my_helper.output(u'旧日期，跳过')
@@ -61,44 +44,46 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
         train_info_request = train.TrainInfoRequest()
         all_train_info = train_info_request.get_result(date_var, from_station, to_station)
         for train_info in all_train_info:
-            train_info.show()
-            continue
-            train_data = train_info['queryLeftNewDTO']
-            if train_data['station_train_code'] in not_like:
+            station_train_code = train_info.get_station_train_code()
+            if station_train_code in not_like:
                 continue
-            if no_GD and train_data['station_train_code'].startswith('G'):
+            if no_GD and station_train_code.startswith('G'):
                 continue
-            if no_GD and train_data['station_train_code'].startswith('D'):
+            if no_GD and station_train_code.startswith('D'):
                 continue
-            if like != [] and not train_data['station_train_code'] in like:
+            if like != [] and not station_train_code in like:
                 continue
 
+            start_time = train_info.get_start_time()
+            arrive_time = train_info.get_arrive_time()
             if start_time_limit:
                 if start_time_limit[0] < start_time_limit[1]:
-                    if train_data['start_time'] < start_time_limit[0] or train_data['start_time'] > start_time_limit[1]:
+                    if start_time < start_time_limit[0] or start_time > start_time_limit[1]:
                         continue
                 else:
-                    if start_time_limit[1] < train_data['start_time'] < start_time_limit[0]:
+                    if start_time_limit[1] < start_time < start_time_limit[0]:
                         continue
 
             if to_time_limit:
                 if to_time_limit[0] < to_time_limit[1]:
-                    if train_data['arrive_time'] < to_time_limit[0] or train_data['arrive_time'] > to_time_limit[1]:
+                    if arrive_time < to_time_limit[0] or arrive_time > to_time_limit[1]:
                         continue
                 else:
-                    if to_time_limit[1] < train_data['arrive_time'] < to_time_limit[0]:
+                    if to_time_limit[1] < arrive_time < to_time_limit[0]:
                         continue
 
             for seat_var in seat:
-                if train_data[seat_code[seat_var]] == '--':
+                seat_number = train_info.get_seat_number(seat_var)
+                if seat_number == '--' or seat_number == '':
                     continue
-                info = train_data['station_train_code'] + '有 ' + train_data[seat_code[seat_var]] + ' 个' + seat_var + '从' + train_data['start_time'] + '到' + train_data['arrive_time'] + '历时' + train_data['lishi']
+                take_time = train_info.get_take_time()
+                info = station_train_code + '有 ' + seat_number + ' 个' + seat_var + '从' + start_time + '到' + arrive_time + '历时' + take_time
                 my_helper.output(info)
-                if train_data[seat_code[seat_var]] == '无':
+                if seat_number == '无':
                     continue
                 if email_notify:
                     my_mail.send(info + ' ' + date_var + '从' + from_station + '到' + to_station)
-                #while True:
+                # while True:
                 my_helper.sound_system_exclamation()
     my_helper.output(u'本次查询结束，等待下一次查询，' + str(my_config.internal_second) + '秒之后')
 

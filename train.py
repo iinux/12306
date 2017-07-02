@@ -64,7 +64,35 @@ class TrainInfoRequest:
 
 class TrainInfo:
     def __init__(self, data):
-        self.data = str.split('|', data)
+        self.data = data.split('|')
 
     def show(self):
         print self.data
+
+    def get_station_train_code(self):
+        return self.data[3]
+
+    def get_start_time(self):
+        return self.data[8]
+
+    def get_arrive_time(self):
+        return self.data[9]
+
+    def get_seat_number(self, seat_var):
+        seat_code = {
+            '高级软卧': 'gr_num',
+            '其它': 'qt_num',
+            '软卧': 23,
+            '软座': 'rz_num',
+            '商务座': 32,
+            '特等座': 32,
+            '无座': 26,
+            '硬卧': 28,
+            '硬座': 29,
+            '二等座': 30,
+            '一等座': 31,
+        }
+        return self.data[seat_code[seat_var]]
+
+    def get_take_time(self):
+        return self.data[10]
