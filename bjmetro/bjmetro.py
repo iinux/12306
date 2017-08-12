@@ -22,7 +22,7 @@ http_request_headers = {
 while True:
     current_datetime = datetime.datetime.now()
     file_name = current_datetime.strftime('%Y-%m-%d-%H-%M');
-    print file_name
+    print(file_name)
     current_time = current_datetime.strftime('%H-%M')
     print(current_time)
 

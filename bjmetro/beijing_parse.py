@@ -35,6 +35,6 @@ for line in lines:
 
 
 for line in line_array:
-    print line.lb
+    print(line.lb)
     for station in line.stations:
         print station.acc, station.lb
