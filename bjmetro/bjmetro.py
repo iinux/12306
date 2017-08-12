@@ -2,6 +2,14 @@ import datetime
 import time
 import urllib2
 
+'''
+http://bjmetro.cc/subwaymap2/public/
+http://bjmetro.cc/subwaymap2/public/api/getblocks
+http://bjmetro.cc/subwaymap2/public/subwaymap/stations.xml
+http://bjmetro.cc/subwaymap2/public/subwaymap/beijing.xml
+http://bjmetro.cc/subwaymap2/public/subwaymap/interchange.xml
+'''
+
 http_request_headers = {
     'Host': 'bjmetro.cc',
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 '
