@@ -21,17 +21,24 @@ http_request_headers = {
 
 while True:
     current_datetime = datetime.datetime.now()
+    file_name = current_datetime.strftime('%Y-%m-%d-%H-%M');
+    print file_name
     current_time = current_datetime.strftime('%H-%M')
     print(current_time)
 
     if current_time <= '00-34' or current_time >= '04-35':
         url = 'http://bjmetro.cc/subwaymap2/public/api/getrealdatas'
         request = urllib2.Request(url, headers=http_request_headers)
-        response = urllib2.urlopen(request)
-        response_body = response.read()
-        response_header = response.info()
-        write_file = open("getrealdatas" + current_time, 'wb')
-        write_file.write(response_body)
-        write_file.close()
+        try:
+            response = urllib2.urlopen(request)
+            response_body = response.read()
+            response_header = response.info()
+            write_file = open("getrealdatas" + file_name, 'wb')
+            write_file.write(response_body)
+            write_file.close()
+        except urllib2.HTTPError:
+            print('urllib2.HTTPError')
+        except urllib2.URLError:
+            print('urllib2.URLError')
 
-    time.sleep(60)
+    time.sleep(180)
