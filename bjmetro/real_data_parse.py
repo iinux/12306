@@ -5,12 +5,13 @@ import json
 from sys import argv
 import MySQLdb
 import beijing_parse
+import config
 
 
 class Parse:
     def __init__(self):
         # 打开数据库连接
-        self.db = MySQLdb.connect("localhost", "root", "", "bjmetro")
+        self.db = MySQLdb.connect(config.mysql_host, config.mysql_user, config.mysql_password, config.mysql_database)
         self.db.set_character_set('utf8')
 
         # 使用cursor()方法获取操作游标
