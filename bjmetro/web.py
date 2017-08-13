@@ -8,15 +8,15 @@ import config
 
 app = flask.Flask(__name__)
 
-db = MySQLdb.connect(config.mysql_host, config.mysql_user, config.mysql_password, config.mysql_database)
-db.set_character_set('utf8')
-
-# 使用cursor()方法获取操作游标
-cursor = db.cursor()
-
 
 @app.route("/")
 def index():
+    db = MySQLdb.connect(config.mysql_host, config.mysql_user, config.mysql_password, config.mysql_database)
+    db.set_character_set('utf8')
+
+    # 使用cursor()方法获取操作游标
+    cursor = db.cursor()
+
     query_update_at = request.args.get('update_at')
 
     cursor.execute("select distinct(update_at) from bj_metro_real_data order by update_at desc")
@@ -39,6 +39,8 @@ def index():
     for update_at in all_update_at:
         update_at = update_at[0].strftime('%Y-%m-%d %H:%M')
         return_string += """<a href='/?update_at=%s'>%s</a><br />""" % (update_at, update_at)
+
+    db.close()
 
     return return_string
 
