@@ -2,6 +2,7 @@ import datetime
 import time
 import urllib2
 import real_data_parse
+import MySQLdb
 
 '''
 http://bjmetro.cc/subwaymap2/public/
@@ -45,6 +46,9 @@ while True:
             print('urllib2.HTTPError')
         except urllib2.URLError:
             print('urllib2.URLError')
+        except MySQLdb.Error, e:
+            print(e)
+            real_data_parse_instance.reconnect()
         except Exception, e:
             print(e)
 
