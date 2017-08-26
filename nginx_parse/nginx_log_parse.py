@@ -5,6 +5,7 @@ import re
 from sys import argv
 import MySQLdb
 import config
+import gzip
 
 
 db = None
@@ -61,7 +62,10 @@ def insert_user_agent(user_agent):
 
 
 def parse_log_file(file_name):
-    f = open(file_name, 'r')
+    if file_name.endswith('.gz'):
+        f = gzip.GzipFile(file_name, 'r')
+    else:
+        f = open(file_name, 'r')
     while True:
         log_line = f.readline()
 
@@ -80,10 +84,8 @@ def parse_log_file(file_name):
         requests = find(pat, log_line)
         if requests:
             for request in requests:
-                print type(request[0])
                 insert_ip(request[0])
                 print (request[0])
-                print type(request[6])
                 insert_user_agent(request[6])
                 print (request[6])
 
