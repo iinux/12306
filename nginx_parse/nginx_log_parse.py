@@ -24,7 +24,7 @@ def init_db():
 
 def insert_ip(ip):
     # 使用execute方法执行SQL语句
-    cursor.execute("SELECT * from ips where ip=%s", (ip))
+    cursor.execute("SELECT * from ips where ip='%s'" % ip)
 
     # 使用 fetchone() 方法获取一条数据库。
     data = cursor.fetchone()
@@ -32,7 +32,7 @@ def insert_ip(ip):
         try:
             # 执行sql语句
             cursor.execute(
-                """INSERT INTO ips(ip) VALUES (%s)""", ip)
+                """INSERT INTO ips(ip) VALUES ('%s')""" % ip)
             # 提交到数据库执行
             db.commit()
         except Exception, e:
@@ -43,7 +43,7 @@ def insert_ip(ip):
 
 def insert_user_agent(user_agent):
     # 使用execute方法执行SQL语句
-    cursor.execute("SELECT * from user_agents where user_agent=%s", user_agent)
+    cursor.execute("SELECT * from user_agents where user_agent='%s'" % user_agent)
 
     # 使用 fetchone() 方法获取一条数据库。
     data = cursor.fetchone()
@@ -51,7 +51,7 @@ def insert_user_agent(user_agent):
         try:
             # 执行sql语句
             cursor.execute(
-                """INSERT INTO user_agents(user_agent) VALUES (%s)""", user_agent)
+                """INSERT INTO user_agents(user_agent) VALUES ('%s')""" % user_agent)
             # 提交到数据库执行
             db.commit()
         except Exception, e:
