@@ -9,14 +9,24 @@ import config
 
 
 class Parse:
+    db = None
+    cursor = None
+
     def __init__(self):
+        self.beijing_parse_instance = beijing_parse.Parse()
+        self.connect()
+
+    def connect(self):
         # 打开数据库连接
         self.db = MySQLdb.connect(config.mysql_host, config.mysql_user, config.mysql_password, config.mysql_database)
         self.db.set_character_set('utf8')
 
         # 使用cursor()方法获取操作游标
         self.cursor = self.db.cursor()
-        self.beijing_parse_instance = beijing_parse.Parse()
+
+    def reconnect(self):
+        self.close()
+        self.connect()
 
     def parse_content(self, content):
         print ("start parse real data")
