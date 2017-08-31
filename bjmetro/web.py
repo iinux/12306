@@ -33,7 +33,7 @@ def index():
         cursor.execute("select * from bj_metro_real_data where update_at=%s", newest_time)
     data = cursor.fetchall()
     for row in data:
-        row_string = "%s %s %s %s" % (row[5], row[6], row[4].strftime("%Y-%m-%d %H:%M"), row[3])
+        row_string = "%s %s %s <span style='color:%s;'>%s</span>" % (row[5], row[6], row[4].strftime("%Y-%m-%d %H:%M"), row[3], row[3])
         return_string += row_string + "<br />"
 
     for update_at in all_update_at:
