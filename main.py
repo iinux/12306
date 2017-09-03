@@ -40,7 +40,7 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
             my_helper.output(u'旧日期，跳过')
             continue
 
-        my_helper.output(u'正在查询 ' + date_var + ' 的车票...')
+        my_helper.output(u'正在查询 ' + from_station + ' 到 ' + to_station + ' ' + date_var + ' 的车票...')
         train_info_request = train.TrainInfoRequest()
         all_train_info = train_info_request.get_result(date_var, from_station, to_station)
         for train_info in all_train_info:
