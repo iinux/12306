@@ -85,6 +85,7 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
                     my_mail.send(info + ' ' + date_var + '从' + from_station + '到' + to_station)
                 # while True:
                 my_helper.sound_system_exclamation()
+        time.sleep(my_config.internal_second)
     my_helper.output(u'本次查询结束，等待下一次查询，' + str(my_config.internal_second) + '秒之后')
 
 
@@ -97,6 +98,7 @@ my_mail.send('开始查询')
 while True:
     try:
         want_ticket()
+        continue
     except KeyboardInterrupt:
         my_helper.error_output('KeyboardInterrupt - EXIT')
         exit()
