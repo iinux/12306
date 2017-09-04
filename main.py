@@ -98,17 +98,10 @@ my_mail.send('开始查询')
 while True:
     try:
         want_ticket()
-        continue
     except KeyboardInterrupt:
         my_helper.error_output('KeyboardInterrupt - EXIT')
         exit()
-    except urllib2.HTTPError:
-        my_helper.error_output('urllib2.HTTPError')
-        pass
-    except urllib2.URLError:
-        my_helper.error_output('urllib2.URLError')
-        pass
     except Exception, e:
-        my_helper.error_output(str(Exception) + ' ' + str(e))
+        my_helper.error_output(str(type(e)) + ' ' + str(e))
+        time.sleep(my_config.internal_second)
         pass
-    time.sleep(my_config.internal_second)

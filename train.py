@@ -3,6 +3,7 @@ import json
 import urllib2
 import my_config
 import my_helper
+import time
 
 
 class TrainInfoRequest:
@@ -51,10 +52,18 @@ class TrainInfoRequest:
               station_code[to_station] + '&purpose_codes=ADULT'
 
         request = urllib2.Request(url, headers=self.http_request_headers)
-        response = urllib2.urlopen(request)
-        html = response.read()
-        response_header = response.info()
-        decode_json = json.loads(html)
+        while True:
+            try:
+                response = urllib2.urlopen(request)
+                html = response.read()
+                response_header = response.info()
+                decode_json = json.loads(html)
+                break
+            except (urllib2.HTTPError, urllib2.URLError, ValueError), e:
+                my_helper.error_output(str(type(e)) + ' ' + str(e))
+                time.sleep(my_config.internal_second / 2)
+                pass
+
         all_train_info = decode_json['data']['result']
         result = []
         for train_info in all_train_info:
