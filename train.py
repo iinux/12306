@@ -5,6 +5,9 @@ import my_config
 import my_helper
 import time
 
+DATA_ADAPTER_NORMAL = 0
+DATA_ADAPTER_MOBILE = 1
+
 
 class TrainInfoRequest:
     def __init__(self):
@@ -32,7 +35,7 @@ class TrainInfoRequest:
             p += 1
         return station_code
 
-    def get_result(self, date_var, from_station, to_station):
+    def get_result(self, date_var, from_station, to_station, data_adapter = DATA_ADAPTER_NORMAL):
         station_code = {
             '北京': 'BJP',
             '福州': 'FZS',
@@ -47,9 +50,16 @@ class TrainInfoRequest:
             station_code[from_station] = self.find_station_code(from_station)
         if not station_code.has_key(to_station):
             station_code[to_station] = self.find_station_code(to_station)
-        url = 'https://kyfw.12306.cn/otn/leftTicket/query' + my_config.random_letter + '?leftTicketDTO.train_date=' + \
-              date_var + '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
-              station_code[to_station] + '&purpose_codes=ADULT'
+
+        if data_adapter == DATA_ADAPTER_NORMAL:
+            url = 'https://kyfw.12306.cn/otn/leftTicket/query' + my_config.random_letter + '?leftTicketDTO.train_date=' + \
+                  date_var + '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
+                  station_code[to_station] + '&purpose_codes=ADULT'
+        elif data_adapter == DATA_ADAPTER_MOBILE:
+            url = 'http://mobile.12306.cn/weixin/leftTicket/query?leftTicketDTO.train_date=' + date_var + \
+                  '&leftTicketDTO.from_station=' + station_code[from_station] + \
+                  '&leftTicketDTO.to_station=' + station_code[to_station] + '&purpose_codes=ADULT'
+            self.http_request_headers['Host'] = 'mobile.12306.cn'
 
         request = urllib2.Request(url, headers=self.http_request_headers)
         while True:
@@ -64,11 +74,18 @@ class TrainInfoRequest:
                 time.sleep(my_config.internal_second / 2)
                 pass
 
-        all_train_info = decode_json['data']['result']
-        result = []
-        for train_info in all_train_info:
-            result.append(TrainInfo(train_info))
-        return result
+        if data_adapter == DATA_ADAPTER_NORMAL:
+            all_train_info = decode_json['data']['result']
+            result = []
+            for train_info in all_train_info:
+                result.append(TrainInfo(train_info))
+            return result
+        elif data_adapter == DATA_ADAPTER_MOBILE:
+            all_train_info = decode_json['data']
+            result = []
+            for train_info in all_train_info:
+                result.append(TrainInfoMobile(train_info))
+            return result
 
 
 class TrainInfo:
@@ -123,3 +140,57 @@ class TrainInfo:
 
     def is_stop_run(self):
         return self.data[19]
+
+
+class TrainInfoMobile:
+    def __init__(self, data):
+        self.data = data
+
+    def show(self):
+        print self.data
+
+    def get_station_train_code(self):
+        return self.data['station_train_code']
+
+    def get_start_time(self):
+        return self.data['start_time']
+
+    def get_arrive_time(self):
+        return self.data['arrive_time']
+
+    def get_seat_number(self, seat_var):
+        seat_code = {
+            # '硬座': 'gg_num',
+            '高级软卧': 'gr_num',
+            '其它': 'qt_num',
+            '软卧': 'rw_num',
+            '软座': 'rz_num',
+            '商务座': 'swz_num',
+            '特等座': 'tz_num',
+            '无座': 'wz_num',
+            # '硬座': 'yb_num',
+            '硬卧': 'yw_num',
+            '硬座': 'yz_num',
+            '二等座': 'ze_num',
+            '一等座': 'zy_num',
+        }
+        return self.data[seat_code[seat_var]]
+
+    def get_take_time(self):
+        return self.data['lishi']
+
+    def get_origin_area(self):
+        return self.data['start_station_name']
+
+    def get_terminal_area(self):
+        return self.data['end_station_name']
+
+    def get_from_station(self):
+        return self.data['from_station_name']
+
+    def get_to_station(self):
+        return self.data['to_station_name']
+
+    def get_departure_date(self):
+        return self.data['start_train_date']
+

@@ -8,11 +8,16 @@ import my_mail
 import my_helper
 import my_config
 import train
+import argparse
 # sys.path.append('a.py所在的路径')
 
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+parser = argparse.ArgumentParser("python main.py")
+parser.add_argument("-m", help="use wechat mobile site data", action="store_true", default=False)
+args = parser.parse_args()
 
 
 ##############################
@@ -21,7 +26,7 @@ sys.setdefaultencoding('utf-8')
 
 
 def want_ticket():
-    train_ticket('北京', '厦门', ['2017-07-20', '2017-07-21', '2017-07-22'], ['硬卧'], email_notify=True,
+    train_ticket('北京', '厦门', ['2017-09-20', '2017-09-21', '2017-09-22'], ['硬卧'], email_notify=True,
                  start_time_limit=['16:00', '16:05'], to_time_limit=['00:00', '23:59'])
 ##############################
 
@@ -42,7 +47,10 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
 
         my_helper.output(u'正在查询 ' + from_station + ' 到 ' + to_station + ' ' + date_var + ' 的车票...')
         train_info_request = train.TrainInfoRequest()
-        all_train_info = train_info_request.get_result(date_var, from_station, to_station)
+        if args.m:
+            all_train_info = train_info_request.get_result(date_var, from_station, to_station, train.DATA_ADAPTER_MOBILE)
+        else:
+            all_train_info = train_info_request.get_result(date_var, from_station, to_station)
         for train_info in all_train_info:
             station_train_code = train_info.get_station_train_code()
             if station_train_code in not_like:
