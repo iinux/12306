@@ -64,11 +64,10 @@ class Parse:
                         """update arrive_data set delay=%s,depart_station_name=%s,arrive_time=%s,exit_entrances=%s,station_platforms=%s,updated_at=%s where id=%s""",
                         (train['delay'], train['departStationName'],
                          time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(train['arriveTime'] / 1000)), exit_entrances,
-                         station_platforms, current_datetime, data['id']))
+                         station_platforms, current_datetime, data[0]))
                 # 提交到数据库执行
                 self.db.commit()
             except Exception, e:
-                raise e
                 # 发生错误时回滚
                 self.db.rollback()
 
