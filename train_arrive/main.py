@@ -43,6 +43,7 @@ while True:
         print('urllib2.URLError')
     except MySQLdb.Error, e:
         print(e)
+        parse_instance.reconnect()
     except Exception, e:
         print(e)
 

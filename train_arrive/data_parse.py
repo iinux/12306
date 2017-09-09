@@ -28,10 +28,11 @@ class Parse:
         self.close()
         self.connect()
 
-    def parse_content(self, content):
-        print ("start parse real data")
+    def parse_content(self, content, date = None):
+        print ("start parse data")
         now = datetime.datetime.now()
-        date = now.strftime('%Y-%m-%d')
+        if date is None:
+            date = now.strftime('%Y-%m-%d')
         current_datetime = now.strftime('%Y-%m-%d %H:%M:%S')
         decode_json = json.loads(content)
         for train in decode_json['data']:
@@ -41,6 +42,7 @@ class Parse:
             station_platforms = ''
             for platform in train['stationPlatforms']:
                 station_platforms += platform['name']
+            arrive_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(train['arriveTime'] / 1000))
 
             # 使用execute方法执行SQL语句
             self.cursor.execute("SELECT * from arrive_data where date=%s and train_number=%s",
@@ -55,16 +57,15 @@ class Parse:
                     # 执行sql语句
                     self.cursor.execute(
                         """INSERT INTO arrive_data(date,train_number,delay,depart_station_name,arrive_time,exit_entrances,station_platforms,created_at,updated_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                        (date, train['trainNumber'], train['delay'], train['departStationName'],
-                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(train['arriveTime'] / 1000)), exit_entrances,
+                        (date, train['trainNumber'], train['delay'], train['departStationName'], arrive_time,
+                         exit_entrances,
                          station_platforms, current_datetime, current_datetime))
-                else:
+                elif data[3] != train['delay'] or data[7] != station_platforms:
                     print("run update")
                     self.cursor.execute(
                         """update arrive_data set delay=%s,depart_station_name=%s,arrive_time=%s,exit_entrances=%s,station_platforms=%s,updated_at=%s where id=%s""",
-                        (train['delay'], train['departStationName'],
-                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(train['arriveTime'] / 1000)), exit_entrances,
-                         station_platforms, current_datetime, data[0]))
+                        (train['delay'], train['departStationName'], arrive_time, exit_entrances, station_platforms,
+                         current_datetime, data[0]))
                 # 提交到数据库执行
                 self.db.commit()
             except Exception, e:
@@ -79,7 +80,8 @@ class Parse:
         file_description = open(filename)
         content = file_description.read()
         print ("processing %s" % filename)
-        self.parse_content(content)
+        date = filename[32:42]
+        self.parse_content(content, date)
         print ("processed %s" % filename)
 
 
