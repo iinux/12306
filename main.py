@@ -32,12 +32,12 @@ def want_ticket():
 
 
 def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify=False, night_query=False,
-                 not_like=[], like=[], start_time_limit=[], to_time_limit=[]):
+                 not_like=[], like=[], start_time_limit=[], to_time_limit=[], lessNotify=0):
     current_datetime = datetime.datetime.now()
     current_date = current_datetime.strftime('%Y-%m-%d')
     local_time = time.localtime()
-    if not night_query and (local_time[3] >= 23 or local_time[3] < 5):
-        my_helper.output(u'23：00到次日6：00无法订票，所以23：00到5：00不作查询。若此期间有退票，会在5：00后提醒。')
+    if not night_query and (local_time[3] >= 23 or local_time[3] < 5 or (local_time[3] == 5 and local_time[4] < 30)):
+        my_helper.output(u'23：00到次日6：00无法订票，所以23：00到5：30不作查询。若此期间有退票，会在5：30后提醒。')
         return
 
     for date_var in date:
@@ -88,6 +88,8 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
                 info = station_train_code + '有 ' + seat_number + ' 个' + seat_var + '从' + start_time + '到' + arrive_time + '历时' + take_time
                 my_helper.output(info)
                 if seat_number == '无':
+                    continue
+                if lessNotify > 0 and int(seat_number) > lessNotify:
                     continue
                 if email_notify:
                     my_mail.send(info + ' ' + date_var + '从' + from_station + '到' + to_station)
