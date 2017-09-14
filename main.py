@@ -38,6 +38,7 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
     local_time = time.localtime()
     if not night_query and (local_time[3] >= 23 or local_time[3] < 5 or (local_time[3] == 5 and local_time[4] < 30)):
         my_helper.output(u'23：00到次日6：00无法订票，所以23：00到5：30不作查询。若此期间有退票，会在5：30后提醒。')
+        time.sleep(my_config.internal_second)
         return
 
     for date_var in date:
