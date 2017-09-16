@@ -32,7 +32,7 @@ def want_ticket():
 
 
 def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify=False, night_query=False,
-                 not_like=[], like=[], start_time_limit=[], to_time_limit=[], lessNotify=0):
+                 not_like=[], like=[], start_time_limit=[], to_time_limit=[], atLeast=1, lessNotify=0):
     current_datetime = datetime.datetime.now()
     current_date = current_datetime.strftime('%Y-%m-%d')
     local_time = time.localtime()
@@ -90,7 +90,9 @@ def train_ticket(from_station, to_station, date, seat, no_GD=False, email_notify
                 my_helper.output(info)
                 if seat_number == '无':
                     continue
-                if lessNotify > 0 and int(seat_number) > lessNotify:
+                if lessNotify > 0 and (seat_number == '有' or int(seat_number) > lessNotify):
+                    continue
+                if atLeast > 1 and seat_number != '有' and int(seat_number) < atLeast:
                     continue
                 if email_notify:
                     my_mail.send(info + ' ' + date_var + '从' + from_station + '到' + to_station)
