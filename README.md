@@ -7,5 +7,5 @@
   1. `python main.py` 运行程序
 
 #### 可能的问题
-  1. 因为 12306 的保护策略，会定期更新 API 接口地址，如果连续出现 urllib2.HTTPError 或 urllib2.URLError 可能是因为地址换了，按照图片 ![find_random_letter.png](http://zhangqun.site/images/find_random_letter.png) 的指示查找新的随机字母（A-Z），当然，也可能是因为你的IP被加入黑名单了，停止若干天就会解除黑名单
+  1. 因为 12306 的保护策略，会定期更新 API 接口地址，如果连续出现 urllib2.HTTPError 或 urllib2.URLError 可能是因为地址换了，按照图片 ![find_random_letter.png](http://zhangqun.site/images/find_random_letter.png) 的指示查找新的随机字母（A-Z）并在`my_config.py`的`random_letter`设置一下，当然，也可能是因为你的IP被加入黑名单了，停止若干天就会解除黑名单
   1. 程序进行了异常捕获，但仍可能是异常退出，可以用 supervisord 对本程序进行托管
