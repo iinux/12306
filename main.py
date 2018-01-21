@@ -120,7 +120,6 @@ while True:
         my_helper.error_output('KeyboardInterrupt - EXIT')
         exit()
     except (Exception) as e:
-        raise e
         my_helper.error_output(str(type(e)) + ' ' + str(e))
         time.sleep(my_config.internal_second)
         pass
