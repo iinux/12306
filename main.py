@@ -26,7 +26,7 @@ args = parser.parse_args()
 
 
 def want_ticket():
-    train_ticket('北京', '厦门', ['2017-09-20', '2017-09-21', '2017-09-22'], ['硬卧'], email_notify=True,
+    train_ticket('北京', '厦门', ['2018-02-10', '2018-02-11', '2018-02-12'], ['硬卧'], email_notify=True,
                  start_time_limit=['16:00', '16:05'], to_time_limit=['00:00', '23:59'])
 ##############################
 

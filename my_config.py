@@ -1,5 +1,5 @@
-debug = False
+debug = True
 daemon_mode = False
 internal_second = 60
-random_letter = ''
+random_letter = 'Z'
 
