@@ -19,7 +19,7 @@ def index():
 
     query_update_at = request.args.get('update_at')
 
-    cursor.execute("select distinct(update_at) from bj_metro_real_data order by update_at desc")
+    cursor.execute("select distinct(update_at) from bj_metro_real_data order by update_at desc limit 100")
     # 使用 fetchone() 方法获取一条数据库。
     all_update_at = cursor.fetchall()
     newest_time = all_update_at[0][0].strftime('%Y-%m-%d %H:%M')
@@ -28,9 +28,9 @@ def index():
     return_string += newest_time + "<br />"
 
     if query_update_at:
-        cursor.execute("select * from bj_metro_real_data where update_at=%s", query_update_at)
+        cursor.execute("select * from bj_metro_real_data where update_at='%s'" % (query_update_at))
     else:
-        cursor.execute("select * from bj_metro_real_data where update_at=%s", newest_time)
+        cursor.execute("select * from bj_metro_real_data where update_at='%s'" % (newest_time))
     data = cursor.fetchall()
     for row in data:
         row_string = "%s %s %s <span style='color:%s;'>%s</span>" % (row[5], row[6], row[4].strftime("%Y-%m-%d %H:%M"), row[3], row[3])
