@@ -1,18 +1,24 @@
 # coding=utf8
+
+from __future__ import print_function
 import os
 import platform
 import time
 import sys
 import my_mail
 
+if sys.version > '3':
+    PY3 = True
+else:
+    PY3 = False
 
 def dd(var):
-    print var
+    print(var)
     sys.exit(0)
 
 
 def output(var):
-    print now_time() + ' ' + var
+    print(now_time() + ' ' + var)
 
 
 def now_time():
@@ -33,7 +39,7 @@ def error_output(var):
         my_mail.send('error buffer', error_buffer)
         error_buffer = ''
         error_count = 0
-    print now_time() + ' ' + var
+    print(now_time() + ' ' + var)
 
 
 def fatal_error(msg):
@@ -57,7 +63,7 @@ def to_daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
         # 父进程(会话组头领进程)退出，这意味着一个非会话组头领进程永远不能重新获得控制终端。
         if pid > 0:
             sys.exit(0)   # 父进程退出
-    except OSError, e:
+    except (OSError) as e:
         error_output('fork #1 failed: (%d) %s\n' % (e.errno, e.strerror))
         sys.exit(1)
 
@@ -72,7 +78,7 @@ def to_daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
         pid = os.fork()
         if pid > 0:
             sys.exit(0)   # 第二个父进程退出
-    except OSError, e:
+    except (OSError) as e:
         error_output('fork #2 failed: (%d) %s\n' % (e.errno, e.strerror))
         sys.exit(1)
 

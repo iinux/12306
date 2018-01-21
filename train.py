@@ -1,9 +1,17 @@
 # coding=utf8
+
+from __future__ import print_function
 import json
-import urllib2
-import my_config
 import my_helper
+import my_config
 import time
+
+if my_helper.PY3:
+    from urllib.request import Request, urlopen
+    from urllib.error import HTTPError, URLError
+    import urllib.parse
+else:
+    from urllib2 import Request, urlopen, HTTPError, URLError
 
 DATA_ADAPTER_NORMAL = 0
 DATA_ADAPTER_MOBILE = 1
@@ -46,9 +54,9 @@ class TrainInfoRequest:
             '厦门': 'XMS',
         }
 
-        if not station_code.has_key(from_station):
+        if not from_station in station_code:
             station_code[from_station] = self.find_station_code(from_station)
-        if not station_code.has_key(to_station):
+        if not to_station in station_code:
             station_code[to_station] = self.find_station_code(to_station)
 
         if data_adapter == DATA_ADAPTER_NORMAL:
@@ -61,15 +69,15 @@ class TrainInfoRequest:
                   '&leftTicketDTO.to_station=' + station_code[to_station] + '&purpose_codes=ADULT'
             self.http_request_headers['Host'] = 'mobile.12306.cn'
 
-        request = urllib2.Request(url, headers=self.http_request_headers)
+        request = Request(url, headers=self.http_request_headers)
         while True:
             try:
-                response = urllib2.urlopen(request)
+                response = urlopen(request)
                 html = response.read()
                 response_header = response.info()
                 decode_json = json.loads(html)
                 break
-            except (urllib2.HTTPError, urllib2.URLError, ValueError), e:
+            except (HTTPError, URLError, ValueError) as e:
                 my_helper.error_output(str(type(e)) + ' ' + str(e))
                 time.sleep(my_config.internal_second / 2)
                 pass
@@ -93,7 +101,7 @@ class TrainInfo:
         self.data = data.split('|')
 
     def show(self):
-        print self.data
+        print(self.data)
 
     def get_station_train_code(self):
         return self.data[3]
@@ -147,7 +155,7 @@ class TrainInfoMobile:
         self.data = data
 
     def show(self):
-        print self.data
+        print(self.data)
 
     def get_station_train_code(self):
         return self.data['station_train_code']

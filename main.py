@@ -1,6 +1,7 @@
 # coding=utf8
+
+from __future__ import print_function
 import json
-import urllib2
 import time
 import sys
 import datetime
@@ -9,11 +10,15 @@ import my_helper
 import my_config
 import train
 import argparse
+
+if my_helper.PY3:
+    import urllib.request, urllib.error, urllib.parse
+else:
+    import urllib2
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
 # sys.path.append('a.py所在的路径')
-
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 parser = argparse.ArgumentParser("python main.py")
 parser.add_argument("-m", help="use wechat mobile site data", action="store_true", default=False)
@@ -114,7 +119,8 @@ while True:
     except KeyboardInterrupt:
         my_helper.error_output('KeyboardInterrupt - EXIT')
         exit()
-    except Exception, e:
+    except (Exception) as e:
+        raise e
         my_helper.error_output(str(type(e)) + ' ' + str(e))
         time.sleep(my_config.internal_second)
         pass
