@@ -14,7 +14,7 @@ def index():
     key = request.args.get('key', 0, type=str)
     if key != config.key:
         return jsonify(result='key error')
-    content = request.args.get('content', 0, type=str)
+    content = request.args.get('content', 0, type=unicode)
     my_friend.send(content)
 
     return jsonify(result='ok')
