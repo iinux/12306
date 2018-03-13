@@ -31,7 +31,7 @@ class Parse:
     def parse_content(self, content):
         print ("start parse real data")
         decode_json = json.loads(content)
-        for seg in decode_json:
+        for seg in decode_json['r']:
             from_name = self.beijing_parse_instance.acc_name_map[seg['fs']]
             to_name = self.beijing_parse_instance.acc_name_map[seg['ts']]
             print from_name, to_name, seg['color'], seg['update_at']
