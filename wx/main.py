@@ -9,7 +9,7 @@ bot = Bot(cache_path=True)
 my_friend = bot.friends().search(u'张群', sex=MALE)[0]
 
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/wxpy", methods=['GET', 'POST'])
 def index():
     key = request.args.get('key', 0, type=str)
     if key != config.key:
