@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border="1" cellspacing="0">
+{% for row in data %}
+    <tr>
+        <td>{{ row[5] }}</td>
+        <td>{{ row[6] }}</td>
+        <td>{{ row[4].strftime("%Y-%m-%d %H:%M") }}</td>
+        <td><span style='color:{{ row[3] }};'>{{ row[3] }}</span></td>
+    </tr>
+{% endfor %}
+</table>
+
+{% for update_at in all_update_at %}
+    <a href='/?update_at={{ update_at }}'>{{ update_at }}</a><br />
+{% endfor %}
+</body>
+</html>
