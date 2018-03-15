@@ -19,15 +19,16 @@
 # vacuum=True   # clear environment on exit
 # max-requests=5000  # 请求5000次后重启
 # daemonize=/var/log/bowenpay/weibo-spider-uwsgi.log # 不使用daemon模式，防止supervisor自动重启
+plugin = python
 
 # uwsgi 启动时所使用的地址与端口
 socket = 127.0.0.1:8001
 
 # 指向网站目录
-chdir = /home/www/
+chdir = /var/bjmetro
 
 # python 启动程序文件
-wsgi-file = manage.py
+wsgi-file = web.py
 
 # python 程序内用以启动的 application 变量名
 callable = app
