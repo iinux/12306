@@ -28,6 +28,9 @@ class Parse:
         self.acc_name_map = {
 
         }
+        self.acc_name_map_with_line = {
+
+        }
         for line in lines:
             station_array = []
             stations = line.getElementsByTagName("p")
@@ -35,6 +38,8 @@ class Parse:
                 station = Station(station)
                 if station.lb != "":
                     self.acc_name_map[station.acc] = station.lb
+                    self.acc_name_map_with_line[station.acc] = [station.lb, line.getAttribute("lb"),
+                                                                line.getAttribute("lc")]
                     station_array.append(station)
 
             self.line_array.append(Line(line, station_array))

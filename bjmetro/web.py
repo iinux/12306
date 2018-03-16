@@ -6,6 +6,7 @@ from flask import request, render_template
 import MySQLdb
 import config
 import sys
+import beijing_parse
 
 sys.path.append('../')
 import my_helper
@@ -15,6 +16,7 @@ if not my_helper.PY3:
     sys.setdefaultencoding('utf8')
 
 app = flask.Flask(__name__)
+beijing_parse_instance = beijing_parse.Parse()
 
 
 @app.route("/")
@@ -48,7 +50,8 @@ def index():
 
     db.close()
 
-    return render_template('index.html', all_update_at=_all_update_at, data=data)
+    return render_template('index.html', all_update_at=_all_update_at, data=data,
+                           map=beijing_parse_instance.acc_name_map_with_line)
 
 
 if __name__ == "__main__":
