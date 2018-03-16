@@ -9,11 +9,8 @@
             overflow-y: auto;
         }
 
-        #tableDiv {
-        }
-
-        table {
-            margin: 30px;
+        #tableDiv, #timeListDiv {
+            padding: 30px;
         }
 
         table p {
@@ -28,16 +25,20 @@
 </head>
 <body>
 <div id="tableDiv">
-    <table class="gridtable" border="1" cellspacing="0">
+    <table border="1" cellspacing="0">
         {% for row in data %}
             <tr>
-                <td><p>{{ map[row[1]][0] }} (<span style="color: {{ map[row[1]][2].replace("0x", "#") }}">{{ map[row[1]][1] }}</span>)</p></td>
-                <td><p>{{ map[row[2]][0] }} (<span style="color: {{ map[row[2]][2].replace("0x", "#") }}">{{ map[row[2]][1] }}</span>)</p></td>
+                <td><p>{{ map[row[1]][0] }} (<span
+                        style="color: {{ map[row[1]][2].replace("0x", "#") }}">{{ map[row[1]][1] }}</span>)</p></td>
+                <td><p>{{ map[row[2]][0] }} (<span
+                        style="color: {{ map[row[2]][2].replace("0x", "#") }}">{{ map[row[2]][1] }}</span>)</p></td>
                 <td><p>{{ row[4].strftime("%Y-%m-%d %H:%M") }}</p></td>
                 <td><p><span style="color:{{ row[3] }};">{{ row[3] }}</span></p></td>
             </tr>
         {% endfor %}
     </table>
+</div>
+<div id="timeListDiv">
     {% for update_at in all_update_at %}
         <a href='/?update_at={{ update_at }}'>{{ update_at }}</a><br/>
     {% endfor %}
