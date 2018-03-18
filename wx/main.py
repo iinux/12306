@@ -15,7 +15,13 @@ def index():
     if key != config.key:
         return jsonify(result='key error')
     content = request.args.get('content', 0, type=unicode)
-    my_friend.send(content)
+    
+    who = request.args.get('who', type=unicode)
+    if who is not None:
+        a_friend = bot.friends().search(who)[0]
+        a_friend.send(content)
+    else:
+        my_friend.send(content)
 
     return jsonify(result='ok')
 
