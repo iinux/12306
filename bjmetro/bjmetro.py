@@ -1,4 +1,5 @@
 import datetime
+import httplib
 import time
 import urllib2
 import real_data_parse
@@ -49,6 +50,11 @@ while True:
         except MySQLdb.Error, e:
             print(e)
             real_data_parse_instance.reconnect()
+        except httplib.BadStatusLine, e:
+            print('httplib.BadStatusLine')
+        except KeyError,e:
+            print(e)
+
         except Exception, e:
             print(e)
 

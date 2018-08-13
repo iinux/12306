@@ -30,7 +30,7 @@ def now_time():
 
 error_buffer = ''
 error_count = 0
-error_notification_trigger_number = 10
+error_notification_trigger_number = 1000
 
 
 def error_output(var):
