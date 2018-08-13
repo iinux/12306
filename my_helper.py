@@ -6,6 +6,7 @@ import platform
 import time
 import sys
 import my_mail
+import datetime
 
 if sys.version > '3':
     PY3 = True
@@ -108,3 +109,12 @@ def sound_system_exclamation():
     else:
         output('SystemExclamation')
         time.sleep(1)
+
+
+def fix_update_at(origin):
+    current_datetime = datetime.datetime.now()
+    origin_datetime = datetime.datetime.strptime(origin, "%Y-%m-%d %X")
+    if current_datetime - origin_datetime > datetime.timedelta(days=6):
+        return origin_datetime + datetime.timedelta(days=7)
+    else:
+        return origin
