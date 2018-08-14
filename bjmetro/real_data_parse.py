@@ -37,10 +37,11 @@ class Parse:
         for seg in decode_json['r']:
             from_name = self.beijing_parse_instance.acc_name_map[seg['fs']]
             to_name = self.beijing_parse_instance.acc_name_map[seg['ts']]
+            seg['update_at'] = my_helper.fix_update_at(seg['update_at'])
             print from_name, to_name, seg['color'], seg['update_at']
             # 使用execute方法执行SQL语句
             self.cursor.execute("SELECT * from bj_metro_real_data where fs=%s and ts=%s and update_at=%s",
-                                (seg['fs'], seg['ts'], my_helper.fix_update_at(seg['update_at'])))
+                                (seg['fs'], seg['ts'], seg['update_at']))
 
             # 使用 fetchone() 方法获取一条数据库。
             data = self.cursor.fetchone()
