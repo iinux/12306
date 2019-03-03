@@ -34,7 +34,8 @@ while True:
     print(current_time)
 
     if current_time <= '00-34' or current_time >= '04-35':
-        url = 'http://119.254.65.180:8080/subwaymap2/public/api/getrealdatas'
+        # url = 'http://119.254.65.180:8080/subwaymap2/public/api/getrealdatas'
+        url = 'http://map.bjsubway.com/api/getrealdatas'
         request = urllib2.Request(url, headers=http_request_headers)
         try:
             response = urllib2.urlopen(request)
