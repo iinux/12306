@@ -9,7 +9,9 @@ import MySQLdb
 http://bjmetro.cc/subwaymap2/public/
 http://bjmetro.cc/subwaymap2/public/api/getblocks
 http://bjmetro.cc/subwaymap2/public/subwaymap/stations.xml
-http://bjmetro.cc/subwaymap2/public/subwaymap/beijing.xml
+xxx http://bjmetro.cc/subwaymap2/public/subwaymap/beijing.xml
+https://bjsubway.com/
+https://bjsubway.com/subwaymap/beijing.xml?v=2
 http://bjmetro.cc/subwaymap2/public/subwaymap/interchange.xml
 '''
 
