@@ -4,6 +4,7 @@ import time
 import urllib2
 import real_data_parse
 import MySQLdb
+import ssl
 
 '''
 http://bjmetro.cc/subwaymap2/public/
@@ -35,10 +36,13 @@ while True:
 
     if current_time <= '00-34' or current_time >= '04-35':
         # url = 'http://119.254.65.180:8080/subwaymap2/public/api/getrealdatas'
-        url = 'http://map.bjsubway.com/api/getrealdatas'
+        url = 'https://map.bjsubway.com/api/getrealdatas'
         request = urllib2.Request(url, headers=http_request_headers)
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
         try:
-            response = urllib2.urlopen(request)
+            response = urllib2.urlopen(request, context=ctx)
             response_body = response.read()
             response_header = response.info()
             write_file = open("getrealdatas" + file_name, 'wb')
