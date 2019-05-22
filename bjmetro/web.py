@@ -15,7 +15,7 @@ if not my_helper.PY3:
     reload(sys)
     sys.setdefaultencoding('utf8')
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_folder='bower_components')
 beijing_parse_instance = beijing_parse.Parse()
 
 

@@ -9,7 +9,7 @@
             overflow-y: auto;
         }
 
-        #tableDiv, #timeListDiv {
+        #tableDiv, #timeListDiv, #timeSelectDiv {
             padding: 30px;
         }
 
@@ -22,6 +22,34 @@
             font-size: 1.5rem;
         }
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/bower_components/jquery-ui/themes/base/jquery-ui.css">
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="/bower_components/moment/moment.js"></script>
+    <script>
+        $(function () {
+            var datepicker = $("#datepicker");
+            datepicker.datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+            datepicker.val(moment().format("YYYY-MM-DD"));
+            var hourSelect = $("#hourSelect");
+            for (var i = 0; i <= 23; i++) {
+                var is = (i).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+                hourSelect.append(new Option(is, is));
+            }
+            var minuteSelect = $("#minuteSelect");
+            for (var i = 0; i <= 45; i += 5) {
+                var is = (i).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+                minuteSelect.append(new Option(is, is));
+            }
+            $("#timeSelectButtonGo").on("click", function () {
+                var dateTime = datepicker.val() + " " + hourSelect.val() + ":" + minuteSelect.val();
+                window.location = '/?update_at=' + dateTime;
+            });
+        });
+    </script>
 </head>
 <body>
 <div id="tableDiv">
@@ -37,6 +65,14 @@
             </tr>
         {% endfor %}
     </table>
+</div>
+<div id="timeSelectDiv">
+    <input type="text" id="datepicker">
+    <select id="hourSelect">
+    </select>
+    <select id="minuteSelect">
+    </select>
+    <input type="button" value="go" id="timeSelectButtonGo">
 </div>
 <div id="timeListDiv">
     {% for update_at in all_update_at %}
