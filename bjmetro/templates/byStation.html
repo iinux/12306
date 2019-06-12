@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block js %}
+    <script>
+        $(function () {
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="tableDiv">
+        <table border="1" cellspacing="0">
+            {% for row in data %}
+                <tr>
+                    <td><p>{{ map[row[1]][0] }} (<span
+                            style="color: {{ map[row[1]][2].replace("0x", "#") }}">{{ map[row[1]][1] }}</span>)</p></td>
+                    <td><p>{{ map[row[2]][0] }} (<span
+                            style="color: {{ map[row[2]][2].replace("0x", "#") }}">{{ map[row[2]][1] }}</span>)</p></td>
+                    <td><p>{{ row[4].strftime("%Y-%m-%d %H:%M") }}</p></td>
+                    <td><p><span style="color:{{ row[3] }};">{{ row[3] }}</span></p></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
