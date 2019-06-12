@@ -54,6 +54,25 @@ def index():
                            map=beijing_parse_instance.acc_name_map_with_line)
 
 
+@app.route("/byStation")
+def by_station():
+    db = MySQLdb.connect(config.mysql_host, config.mysql_user, config.mysql_password, config.mysql_database)
+    db.set_character_set('utf8')
+
+    # 使用cursor()方法获取操作游标
+    cursor = db.cursor()
+
+    from_name = request.args.get('from_name')
+    to_name = request.args.get('to_name')
+
+    cursor.execute("select * from bj_metro_real_data where from_name='%s' and to_name='%s' limit %d" %
+                   (from_name, to_name, 100))
+    data = cursor.fetchall()
+
+    db.close()
+
+    return render_template('byStation.html', data=data,
+                           map=beijing_parse_instance.acc_name_map_with_line)
 if __name__ == "__main__":
     app.debug = config.flask_debug_switch
     app.run(host=config.flask_listen_host)

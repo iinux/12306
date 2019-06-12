@@ -1,41 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <style>
-        html, body {
-            overflow: hidden;
-            overflow-y: auto;
-        }
-        @media (min-width: 1281px) {
-            #tableDiv, #timeListDiv, #timeSelectDiv {
-                padding: 30px;
-            }
-
-            table p {
-                font-size: 1.5rem;
-                margin: 10px;
-            }
-
-            a {
-                font-size: 1.5rem;
-            }
-
-        }
-
-        @media (min-width: 1px) and (max-width: 1280px) {
-            table p {
-                font-size: 0.7rem;
-                margin: 1px;
-            }
-        }
-    </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/bower_components/jquery-ui/themes/base/jquery-ui.css">
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="/bower_components/moment/moment.js"></script>
+{% extends "layout.html" %}
+{% block js %}
     <script>
         $(function () {
             var datepicker = $("#datepicker");
@@ -44,13 +8,14 @@
             });
             datepicker.val(moment().format("YYYY-MM-DD"));
             var hourSelect = $("#hourSelect");
-            for (var i = 0; i <= 23; i++) {
-                var is = (i).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+            var i, is;
+            for (i = 0; i <= 23; i++) {
+                is = (i).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
                 hourSelect.append(new Option(is, is));
             }
             var minuteSelect = $("#minuteSelect");
-            for (var i = 0; i <= 45; i += 5) {
-                var is = (i).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+            for (i = 0; i <= 55; i += 5) {
+                is = (i).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
                 minuteSelect.append(new Option(is, is));
             }
             $("#timeSelectButtonGo").on("click", function () {
@@ -59,34 +24,33 @@
             });
         });
     </script>
-</head>
-<body>
-<div id="tableDiv">
-    <table border="1" cellspacing="0">
-        {% for row in data %}
-            <tr>
-                <td><p>{{ map[row[1]][0] }} (<span
-                        style="color: {{ map[row[1]][2].replace("0x", "#") }}">{{ map[row[1]][1] }}</span>)</p></td>
-                <td><p>{{ map[row[2]][0] }} (<span
-                        style="color: {{ map[row[2]][2].replace("0x", "#") }}">{{ map[row[2]][1] }}</span>)</p></td>
-                <td><p>{{ row[4].strftime("%Y-%m-%d %H:%M") }}</p></td>
-                <td><p><span style="color:{{ row[3] }};">{{ row[3] }}</span></p></td>
-            </tr>
+{% endblock %}
+{% block content %}
+    <div id="tableDiv">
+        <table border="1" cellspacing="0">
+            {% for row in data %}
+                <tr>
+                    <td><p>{{ map[row[1]][0] }} (<span
+                            style="color: {{ map[row[1]][2].replace("0x", "#") }}">{{ map[row[1]][1] }}</span>)</p></td>
+                    <td><p>{{ map[row[2]][0] }} (<span
+                            style="color: {{ map[row[2]][2].replace("0x", "#") }}">{{ map[row[2]][1] }}</span>)</p></td>
+                    <td><p>{{ row[4].strftime("%Y-%m-%d %H:%M") }}</p></td>
+                    <td><p><span style="color:{{ row[3] }};">{{ row[3] }}</span></p></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="timeSelectDiv">
+        <input type="text" id="datepicker" readonly>
+        <select id="hourSelect">
+        </select>
+        <select id="minuteSelect">
+        </select>
+        <input type="button" value="go" id="timeSelectButtonGo">
+    </div>
+    <div id="timeListDiv">
+        {% for update_at in all_update_at %}
+            <a href='/?update_at={{ update_at }}'>{{ update_at }}</a><br/>
         {% endfor %}
-    </table>
-</div>
-<div id="timeSelectDiv">
-    <input type="text" id="datepicker" readonly>
-    <select id="hourSelect">
-    </select>
-    <select id="minuteSelect">
-    </select>
-    <input type="button" value="go" id="timeSelectButtonGo">
-</div>
-<div id="timeListDiv">
-    {% for update_at in all_update_at %}
-        <a href='/?update_at={{ update_at }}'>{{ update_at }}</a><br/>
-    {% endfor %}
-</div>
-</body>
-</html>
+    </div>
+{% endblock %}
