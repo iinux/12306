@@ -21,25 +21,6 @@ html, body {
     a {
         font-size: 1.5rem;
     }
-
-    a:link {
-        text-decoration: none;
-        color: blue
-    }
-
-    a:active {
-        text-decoration: blink
-    }
-
-    a:hover {
-        text-decoration: underline;
-        color: red
-    }
-
-    a:visited {
-        text-decoration: none;
-        color: green
-    }
 }
 
 @media (min-width: 1px) and (max-width: 1280px) {
