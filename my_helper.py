@@ -115,6 +115,6 @@ def fix_update_at(origin):
     current_datetime = datetime.datetime.now()
     origin_datetime = datetime.datetime.strptime(origin, "%Y-%m-%d %X")
     if current_datetime - origin_datetime > datetime.timedelta(days=6):
-        return origin_datetime + datetime.timedelta(days=7)
+        return origin_datetime.replace(current_datetime.year, current_datetime.month, current_datetime.day)
     else:
         return origin
