@@ -13,6 +13,10 @@ if my_helper.PY3:
 else:
     from urllib2 import Request, urlopen, HTTPError, URLError
 
+import chardet
+import os
+import sys
+
 DATA_ADAPTER_NORMAL = 0
 DATA_ADAPTER_MOBILE = 1
 
@@ -21,11 +25,30 @@ class TrainInfoRequest:
     def __init__(self):
         self.http_request_headers = {
             'Host': 'kyfw.12306.cn',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 '
-                          'Safari/537.36 2345Explorer/6.3.0.9753',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Connection': 'keep-alive',
-            'Accept-Language': 'zh-CN,zh;q=0.8'
+            'Accept-Language': 'zh-CN,zh;q=0.8',
+            'Cache-Control': 'max-age=0',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36',
+            'Sec-Fetch-User': '1',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-Mode': 'navigate',
+            'Accept-Encoding': 'deflate, br',
+        }
+
+        self.http_request_cookies = {
+            'JSESSIONID': '6287C53D5CAB8BFC03C55DF07D8DB944',
+            'BIGipServerotn': '585629962.64545.0000',
+            'RAIL_EXPIRATION': '1579667343088',
+            'RAIL_DEVICEID': 'UOMY_J5PsrufMPeltK1azWB--gz0WyYO3qa3FPTrh4-vX5gt4jzm9v3K7E0cM5gtj8Ccqsn35nOS4Z7kLcFsYdc8LvZ2pGVDKcI2sLTasQB27QsYYeff8tKJa9gU4i6lojGaMH2jqjINBgvkMZ2x_b4-Cx2G0ZN7',
+            'BIGipServerpassport': '1005060362.50215.0000',
+            'route': '9036359bb8a8a461c164a04f8f50b252',
+            '_jc_save_fromStation': '%u5317%u4EAC%2CBJP',
+            '_jc_save_toStation': '%u4E0A%u6D77%2CSHH',
+            '_jc_save_fromDate': '2020-01-18',
+            '_jc_save_toDate': '2020-01-18',
+            '_jc_save_wfdc_flag': 'dc',
         }
 
     def find_station_code(self, station_name):
@@ -52,12 +75,19 @@ class TrainInfoRequest:
             '邢台': 'XTP',
             '石家庄': 'SJP',
             '厦门': 'XMS',
+            '上海': 'SHH',
         }
 
         if not from_station in station_code:
             station_code[from_station] = self.find_station_code(from_station)
         if not to_station in station_code:
             station_code[to_station] = self.find_station_code(to_station)
+
+        cookies = []
+        for i in self.http_request_cookies:
+            cookies.append(i+'='+self.http_request_cookies[i])
+
+        self.http_request_headers['Cookie'] = ';'.join(cookies)
 
         if data_adapter == DATA_ADAPTER_NORMAL:
             url = 'https://kyfw.12306.cn/otn/leftTicket/query' + my_config.random_letter + '?leftTicketDTO.train_date=' + \
@@ -68,6 +98,8 @@ class TrainInfoRequest:
                   '&leftTicketDTO.from_station=' + station_code[from_station] + \
                   '&leftTicketDTO.to_station=' + station_code[to_station] + '&purpose_codes=ADULT'
             self.http_request_headers['Host'] = 'mobile.12306.cn'
+        else:
+            return
 
         request = Request(url, headers=self.http_request_headers)
         while True:
@@ -93,12 +125,14 @@ class TrainInfoRequest:
             result = []
             for train_info in all_train_info:
                 result.append(TrainInfoMobile(train_info))
+
             return result
 
 
 class TrainInfo:
     def __init__(self, data):
         self.data = data.split('|')
+        #print(self.data)
 
     def show(self):
         print(self.data)
