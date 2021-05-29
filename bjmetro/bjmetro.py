@@ -36,7 +36,8 @@ while True:
 
     if current_time <= '00-34' or current_time >= '04-35':
         # url = 'http://119.254.65.180:8080/subwaymap2/public/api/getrealdatas'
-        url = 'https://map.bjsubway.com/api/getrealdatas'
+        # url = 'https://map.bjsubway.com/api/getrealdatas'
+        url = 'https://map.bjsubway.com/getrealdatas'
         request = urllib2.Request(url, headers=http_request_headers)
         ctx = ssl.create_default_context()
         ctx.check_hostname = False

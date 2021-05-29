@@ -76,6 +76,7 @@ class TrainInfoRequest:
             '石家庄': 'SJP',
             '厦门': 'XMS',
             '上海': 'SHH',
+            '聊城':'UCK',
         }
 
         if not from_station in station_code:
@@ -101,6 +102,7 @@ class TrainInfoRequest:
         else:
             return
 
+        print(url)
         request = Request(url, headers=self.http_request_headers)
         while True:
             try:
