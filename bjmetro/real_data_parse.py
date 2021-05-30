@@ -38,7 +38,7 @@ class Parse:
             from_name = self.beijing_parse_instance.acc_name_map[seg['fs']]
             to_name = self.beijing_parse_instance.acc_name_map[seg['ts']]
             seg['update_at'] = my_helper.fix_update_at(seg['update_at'])
-            print from_name, to_name, seg['color'], seg['update_at']
+            print(from_name, to_name, seg['color'], seg['update_at'])
             # 使用execute方法执行SQL语句
             self.cursor.execute("SELECT * from bj_metro_real_data where fs=%s and ts=%s and update_at=%s",
                                 (seg['fs'], seg['ts'], seg['update_at']))
@@ -53,7 +53,7 @@ class Parse:
                         (seg['id'], seg['fs'], seg['ts'], seg['color'], seg['update_at'], from_name, to_name))
                     # 提交到数据库执行
                     self.db.commit()
-                except Exception, e:
+                except Exception as e:
                     print(e)
                     # 发生错误时回滚
                     self.db.rollback()

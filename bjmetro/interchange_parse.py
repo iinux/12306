@@ -45,4 +45,4 @@ for exchange in exchanges:
     exchange_array.append(Exchange(exchange))
 
 for exchange in exchange_array:
-    print "%s %s %s" % (exchange.name, exchange.from_line, exchange.to_line)
+    print("%s %s %s" % (exchange.name, exchange.from_line, exchange.to_line))

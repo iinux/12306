@@ -41,10 +41,10 @@ while True:
         print('urllib2.HTTPError')
     except urllib2.URLError:
         print('urllib2.URLError')
-    except MySQLdb.Error, e:
+    except MySQLdb.Error as e:
         print(e)
         parse_instance.reconnect()
-    except Exception, e:
+    except Exception as e:
         print(e)
 
     time.sleep(60*30)

@@ -48,6 +48,6 @@ class Parse:
 if __name__ == "__main__":
     parse = Parse()
     for line in parse.line_array:
-        print line.lb
+        print(line.lb)
         for station in line.stations:
-            print station.acc, station.lb
+            print(station.acc, station.lb)

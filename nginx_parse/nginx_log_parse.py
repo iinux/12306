@@ -36,7 +36,7 @@ def insert_ip(ip):
                 """INSERT INTO ips(ip) VALUES ('%s')""" % ip)
             # 提交到数据库执行
             db.commit()
-        except Exception, e:
+        except Exception as e:
             print(e)
             # 发生错误时回滚
             db.rollback()
@@ -55,7 +55,7 @@ def insert_user_agent(user_agent):
                 """INSERT INTO user_agents(user_agent) VALUES ('%s')""" % user_agent)
             # 提交到数据库执行
             db.commit()
-        except Exception, e:
+        except Exception as e:
             print(e)
             # 发生错误时回滚
             db.rollback()

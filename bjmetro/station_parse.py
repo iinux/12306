@@ -21,5 +21,5 @@ for station in stations:
     station_array.append(Station(station.getAttribute("name"), station.getAttribute("linename"), station.getAttribute("firstend")))
 
 for station in station_array:
-    print "%s %s %s" % (station.name, station.line_name, station.first_end)
+    print("%s %s %s" % (station.name, station.line_name, station.first_end))
 

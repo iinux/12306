@@ -15,7 +15,7 @@ stop_continuous_flags = {}
 
 
 def quit(signum, frame):
-    print 'You choose to stop me.'
+    print('You choose to stop me.')
     sys.exit()
 
 

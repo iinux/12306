@@ -1,7 +1,6 @@
 import datetime
-import httplib
 import time
-import urllib2
+from urllib.request import urlopen
 import real_data_parse
 import MySQLdb
 import ssl
@@ -38,32 +37,22 @@ while True:
         # url = 'http://119.254.65.180:8080/subwaymap2/public/api/getrealdatas'
         # url = 'https://map.bjsubway.com/api/getrealdatas'
         url = 'https://map.bjsubway.com/getrealdatas'
-        request = urllib2.Request(url, headers=http_request_headers)
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
         try:
-            response = urllib2.urlopen(request, context=ctx)
+            response = urlopen(url)
             response_body = response.read()
             response_header = response.info()
-            write_file = open("getrealdatas" + file_name, 'wb')
+            write_file = open("getrealdatas/" + file_name, 'wb')
             write_file.write(response_body)
             write_file.close()
 
             real_data_parse_instance.parse_content(response_body)
-        except urllib2.HTTPError:
-            print('urllib2.HTTPError')
-        except urllib2.URLError:
-            print('urllib2.URLError')
-        except MySQLdb.Error, e:
+        except MySQLdb.Error as e:
             print(e)
             real_data_parse_instance.reconnect()
-        except httplib.BadStatusLine, e:
-            print('httplib.BadStatusLine')
-        except KeyError,e:
+        except KeyError as e:
             print(e)
 
-        except Exception, e:
+        except Exception as e:
             print(e)
 
     time.sleep(180)

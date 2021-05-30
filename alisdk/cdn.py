@@ -39,7 +39,7 @@ def search(start_time, end_time):
         print (data_module['TimeStamp'], data_module['Value'])
         total += int(data_module['Value'])
 
-    print start_time, end_time, (total / 1024 / 1024 / 1024), 'GB'
+    print(start_time, end_time, (total / 1024 / 1024 / 1024), 'GB')
 
 
 from_date = datetime.datetime(2017, 1, 1)

@@ -28,8 +28,8 @@ class Parse:
         self.close()
         self.connect()
 
-    def parse_content(self, content, date = None):
-        print ("start parse data")
+    def parse_content(self, content, date=None):
+        print("start parse data")
         now = datetime.datetime.now()
         if date is None:
             date = now.strftime('%Y-%m-%d')
@@ -68,7 +68,7 @@ class Parse:
                          current_datetime, data[0]))
                 # 提交到数据库执行
                 self.db.commit()
-            except Exception, e:
+            except Exception as e:
                 # 发生错误时回滚
                 self.db.rollback()
 
