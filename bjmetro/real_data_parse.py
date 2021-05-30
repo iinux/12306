@@ -11,6 +11,7 @@ import config
 path.append('../')
 import my_helper
 
+
 class Parse:
     db = None
     cursor = None
@@ -32,7 +33,7 @@ class Parse:
         self.connect()
 
     def parse_content(self, content):
-        print ("start parse real data")
+        print("start parse real data")
         decode_json = json.loads(content)
         for seg in decode_json['r']:
             from_name = self.beijing_parse_instance.acc_name_map[seg['fs']]
@@ -65,9 +66,9 @@ class Parse:
     def parse_file(self, filename):
         file_description = open(filename)
         content = file_description.read()
-        print ("processing %s" % filename)
+        print("processing %s" % filename)
         self.parse_content(content)
-        print ("processed %s" % filename)
+        print("processed %s" % filename)
 
 
 if __name__ == "__main__":
