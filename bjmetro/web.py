@@ -7,6 +7,7 @@ import MySQLdb
 import config
 import sys
 import beijing_parse
+import requests
 
 sys.path.append('../')
 import my_helper
@@ -17,6 +18,10 @@ if not my_helper.PY3:
 
 app = flask.Flask(__name__, static_folder='bower_components')
 beijing_parse_instance = beijing_parse.Parse()
+
+url = 'http://www.8989iot.com/api/Card/loginCard'
+user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/536.36 (KHTML, like Gecko) Chrome/105.0.0.0 ' \
+             'Safari/536.36 '
 
 
 @app.route("/")
@@ -75,6 +80,32 @@ def by_station():
 
     return render_template('byStation.html', data=data,
                            map=beijing_parse_instance.acc_name_map_with_line)
+
+
+@app.route("/traffic_card_query")
+def traffic_card_query():
+    data_list = []
+    for number in config.traffic_card_query_numbers:
+        data_list.append(traffic_card_query_req(number))
+    return render_template('traffic_card_query.html', data=data_list)
+
+
+def traffic_card_query_req(number):
+    res = requests.post(url, json={
+        'number': number
+    }, headers={
+        'Content-Type': 'application/json',
+        'User-Agent': user_agent,
+    })
+
+    res_data = res.json()['data']
+    res_dict = {}
+    res_dict['number'] = number
+    res_dict['usage'] = 'usage: %s G / %s G' % (res_data['remainAmount'] / 1024, res_data['totalAmount'] / 1024)
+    res_dict['package_name'] = 'packageName: ' + res_data['packageName']
+    res_dict['expire_time'] = 'expiretime: ' + res_data['expiretime']
+    res_dict['status'] = 'status: ' + res_data['status']
+    return res_dict
 
 
 if __name__ == "__main__":

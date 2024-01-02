@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for row in data %}
+    <p>
+        {{ row.number }} <br />
+        {{ row.usage }} <br />
+        {{ row.package_name }} <br />
+        {{ row.expire_time }} <br />
+        {{ row.status }} <br />
+    </p>
+{% endfor %}
+
+</body>
+</html>
