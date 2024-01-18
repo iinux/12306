@@ -108,6 +108,34 @@ def traffic_card_query_req(number):
     return res_dict
 
 
+@app.route("/real_bus_query")
+def real_bus_query():
+    start = request.args.get('start')
+    end = request.args.get('end')
+    data_list = []
+    tag = 'start'
+    previous_line = ''
+    with open(config.real_bus_data_file, 'r') as file:
+        for line in file:
+            columns = line.strip().split(' ')
+            last_column = columns[-1]
+            if tag != last_column and previous_line != '':
+                check_time(data_list, previous_line, start, end)
+
+            tag = last_column
+            previous_line = line
+    return render_template('real_bus_query.html', data=data_list)
+
+
+def check_time(data_list, line, start, end):
+    line = line.strip()
+    columns = line.split(' ')
+    arrive_time_str = columns[-4]
+
+    if start <= arrive_time_str <= end:
+        data_list.append(columns[0][11:] + ' ' + columns[1][0:8])
+
+
 if __name__ == "__main__":
     app.debug = config.flask_debug_switch
     app.run(host=config.flask_listen_host)
