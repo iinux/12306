@@ -66,7 +66,7 @@ class TrainInfoRequest:
             p += 1
         return station_code
 
-    def get_result(self, date_var, from_station, to_station, data_adapter = DATA_ADAPTER_NORMAL):
+    def get_result(self, date_var, from_station, to_station, data_adapter=DATA_ADAPTER_NORMAL):
         station_code = {
             '北京': 'BJP',
             '福州': 'FZS',
@@ -76,7 +76,7 @@ class TrainInfoRequest:
             '石家庄': 'SJP',
             '厦门': 'XMS',
             '上海': 'SHH',
-            '聊城':'UCK',
+            '聊城': 'UCK',
         }
 
         if not from_station in station_code:
@@ -86,13 +86,14 @@ class TrainInfoRequest:
 
         cookies = []
         for i in self.http_request_cookies:
-            cookies.append(i+'='+self.http_request_cookies[i])
+            cookies.append(i + '=' + self.http_request_cookies[i])
 
         self.http_request_headers['Cookie'] = ';'.join(cookies)
 
         if data_adapter == DATA_ADAPTER_NORMAL:
             url = 'https://kyfw.12306.cn/otn/leftTicket/query' + my_config.random_letter + '?leftTicketDTO.train_date=' + \
-                  date_var + '&leftTicketDTO.from_station=' + station_code[from_station] + '&leftTicketDTO.to_station=' + \
+                  date_var + '&leftTicketDTO.from_station=' + station_code[
+                      from_station] + '&leftTicketDTO.to_station=' + \
                   station_code[to_station] + '&purpose_codes=ADULT'
         elif data_adapter == DATA_ADAPTER_MOBILE:
             url = 'http://mobile.12306.cn/weixin/leftTicket/query?leftTicketDTO.train_date=' + date_var + \
@@ -130,14 +131,32 @@ class TrainInfoRequest:
 
             return result
 
+    def query_by_train_no(self, train_no, from_station_telecode, to_station_telecode, depart_date):
+        url = 'https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&' \
+              'to_station_telecode=%s&depart_date=%s' % (train_no, from_station_telecode, to_station_telecode,
+                                                         depart_date)
+        request = Request(url, headers=self.http_request_headers)
+        response = urlopen(request)
+        html = response.read()
+        response_header = response.info()
+        decode_json = json.loads(html)
+        station_list = []
+        for item in decode_json['data']['data']:
+            station_list.append(item['station_name'])
+
+        return station_list
+
 
 class TrainInfo:
     def __init__(self, data):
         self.data = data.split('|')
-        #print(self.data)
+        # print(self.data)
 
     def show(self):
         print(self.data)
+
+    def get_train_no(self):
+        return self.data[2]
 
     def get_station_train_code(self):
         return self.data[3]
@@ -237,4 +256,3 @@ class TrainInfoMobile:
 
     def get_departure_date(self):
         return self.data['start_train_date']
-
