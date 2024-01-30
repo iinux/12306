@@ -23,6 +23,8 @@ DATA_ADAPTER_MOBILE = 1
 
 class TrainInfoRequest:
     def __init__(self):
+        self.station_name_code_map = None
+        self.init_station_code_name_map()
         self.http_request_headers = {
             'Host': 'kyfw.12306.cn',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -66,6 +68,25 @@ class TrainInfoRequest:
             p += 1
         return station_code
 
+    def init_station_code_name_map(self):
+        fd = open('station_name_320130.js', 'r')
+        line_str = fd.readline()
+        ls = line_str.split('@')
+        ls_len = len(ls)
+        t_map = {}
+        for i in range(1, ls_len):
+            ls2 = ls[i].split('|')
+            t_map[ls2[1]] = ls2[2]
+        # print(t_map)
+        self.station_name_code_map = t_map
+
+    def find_station_code_2(self, station_name):
+        code = self.station_name_code_map[station_name]
+        if code is None:
+            msg = u'车站名有误，请检查'
+            my_helper.fatal_error(msg)
+        return code
+
     def get_result(self, date_var, from_station, to_station, data_adapter=DATA_ADAPTER_NORMAL):
         station_code = {
             '北京': 'BJP',
@@ -80,9 +101,9 @@ class TrainInfoRequest:
         }
 
         if not from_station in station_code:
-            station_code[from_station] = self.find_station_code(from_station)
+            station_code[from_station] = self.find_station_code_2(from_station)
         if not to_station in station_code:
-            station_code[to_station] = self.find_station_code(to_station)
+            station_code[to_station] = self.find_station_code_2(to_station)
 
         cookies = []
         for i in self.http_request_cookies:
