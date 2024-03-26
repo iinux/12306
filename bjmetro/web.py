@@ -103,7 +103,7 @@ def traffic_card_query_req(number):
     res_dict['number'] = number
     res_dict['usage'] = 'usage: %s G / %s G' % (res_data['remainAmount'] / 1024, res_data['totalAmount'] / 1024)
     res_dict['package_name'] = 'packageName: ' + res_data['packageName']
-    res_dict['expire_time'] = 'expiretime: ' + res_data['expiretime']
+    res_dict['expire_time'] = 'expiretime: ' + res_data['expiretime'] if res_data['expiretime'] is not None else ''
     res_dict['status'] = 'status: ' + res_data['status']
     return res_dict
 
