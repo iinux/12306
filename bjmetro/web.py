@@ -8,6 +8,7 @@ import config
 import sys
 import beijing_parse
 import requests
+import datetime
 
 sys.path.append('../')
 import my_helper
@@ -124,7 +125,22 @@ def real_bus_query():
 
             tag = last_column
             previous_line = line
+    data_list.reverse()
     return render_template('real_bus_query.html', data=data_list)
+
+
+@app.route("/miss")
+def miss():
+    today = datetime.datetime.today()
+
+    ret_str = ''
+    for name, d in config.name_data_map.items():
+        time_delta = today - d
+        number_of_days = time_delta.days
+
+        ret_str += f"想念 {name} 的第 {number_of_days} 天<br/>"
+
+    return ret_str
 
 
 def check_time(data_list, line, start, end):
