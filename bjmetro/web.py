@@ -3,6 +3,7 @@
 
 import flask
 from flask import request, render_template
+# dnf install python3-mysqlclient
 import MySQLdb
 import config
 import sys
@@ -21,6 +22,8 @@ app = flask.Flask(__name__, static_folder='bower_components')
 beijing_parse_instance = beijing_parse.Parse()
 
 url = 'http://www.8989iot.com/api/Card/loginCard'
+url = 'http://tzc.hnstarlink.com/api/Card/loginCard'
+url = 'http://card.8989iot.com/api/Card/loginCard'
 user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/536.36 (KHTML, like Gecko) Chrome/105.0.0.0 ' \
              'Safari/536.36 '
 
