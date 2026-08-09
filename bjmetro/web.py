@@ -23,7 +23,7 @@ beijing_parse_instance = beijing_parse.Parse()
 
 url = 'http://www.8989iot.com/api/Card/loginCard'
 url = 'http://tzc.hnstarlink.com/api/Card/loginCard'
-url = 'http://card.8989iot.com/api/Card/loginCard'
+url = 'http://lkh.8989iot.com/api/Card/loginCard'
 user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/536.36 (KHTML, like Gecko) Chrome/105.0.0.0 ' \
              'Safari/536.36 '
 
@@ -41,6 +41,9 @@ def index():
     cursor.execute("select distinct(update_at) from bj_metro_real_data order by update_at desc limit 100")
     # 使用 fetchone() 方法获取一条数据库。
     all_update_at = cursor.fetchall()
+    if not all_update_at:
+        db.close()
+        return "暂无数据，请稍后再试。", 200
     newest_time = all_update_at[0][0].strftime('%Y-%m-%d %H:%M')
 
     return_string = ""
@@ -95,20 +98,33 @@ def traffic_card_query():
 
 
 def traffic_card_query_req(number):
-    res = requests.post(url, json={
-        'number': number
-    }, headers={
-        'Content-Type': 'application/json',
-        'User-Agent': user_agent,
-    })
-
-    res_data = res.json()['data']
-    res_dict = {}
-    res_dict['number'] = number
-    res_dict['usage'] = 'usage: %s G / %s G' % (res_data['remainAmount'] / 1024, res_data['totalAmount'] / 1024)
-    res_dict['package_name'] = 'packageName: ' + res_data['packageName']
-    res_dict['expire_time'] = 'expiretime: ' + res_data['expiretime'] if res_data['expiretime'] is not None else ''
-    res_dict['status'] = 'status: ' + res_data['status']
+    res_dict = {'number': number}
+    try:
+        res = requests.post(url, json={
+            'number': number
+        }, headers={
+            'Content-Type': 'application/json',
+            'User-Agent': user_agent,
+        }, timeout=5)
+        res.raise_for_status()
+        payload = res.json()
+        if 'data' not in payload:
+            res_dict['error'] = '查询失败：返回数据缺少 data 字段'
+            return res_dict
+        res_data = payload['data']
+        if not res_data:
+            # code=0 一类的正常业务响应（卡号未查到等）
+            msg = payload.get('msg', '未查询到该卡号')
+            res_dict['status'] = 'msg: ' + msg
+            return res_dict
+        res_dict['usage'] = 'usage: %s G / %s G' % (res_data['remainAmount'] / 1024, res_data['totalAmount'] / 1024)
+        res_dict['package_name'] = 'packageName: ' + res_data['packageName']
+        res_dict['expire_time'] = 'expiretime: ' + res_data['expiretime'] if res_data['expiretime'] is not None else ''
+        res_dict['status'] = 'status: ' + res_data['status']
+    except requests.exceptions.RequestException as e:
+        res_dict['error'] = '查询失败：' + str(e)
+    except (ValueError, KeyError, TypeError) as e:
+        res_dict['error'] = '查询失败：返回数据格式错误 (' + str(e) + ')'
     return res_dict
 
 
